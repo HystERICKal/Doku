@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge";
-import { type ClassValue, clsx } from 'clsx'
+import { type ClassValue, clsx } from 'clsx';
 
 export function cn(...inputs: classValue[]) {
   //classValue needs clsx package to be installed

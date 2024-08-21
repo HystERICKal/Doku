@@ -1,7 +1,7 @@
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 import Link from 'next/link'
-// import { ArrowRight } from 'lucide-react'
-// import { buttonVariants } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
+import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
 
 export default function Home() {
@@ -27,16 +27,16 @@ export default function Home() {
           asking questions right away.
         </p>
 
-        {/* <Link
+        <Link
           className={buttonVariants({
             size: 'lg',
             className: 'mt-5',
           })}
           href='/dashboard'
-          target='_blank'>
+          target='_blank'> {/*opens in a new tab*/}
           Get started{' '}
           <ArrowRight className='ml-2 h-5 w-5' />
-        </Link> */}
+        </Link>
       </MaxWidthWrapper>
 
       {/* value proposition section */}
