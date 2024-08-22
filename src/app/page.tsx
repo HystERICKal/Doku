@@ -6,7 +6,7 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <>
+    <> {/*React fragment allows to put elements next to each other like Maxwidthwrapper and the div that follows*/}
     {/* items-center is for vertical and justify-center is for horizontal alignment but since flex-column is being used its inverted*/}
     {/* they basically invert when using flex-col */}
       <MaxWidthWrapper className='mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center'> 
@@ -27,8 +27,8 @@ export default function Home() {
           asking questions right away.
         </p>
 
-        <Link
-          className={buttonVariants({
+        <Link /*Creating a link with button styles*/
+          className={buttonVariants({ /*button styles from shadcn*/
             size: 'lg',
             className: 'mt-5',
           })}
@@ -45,11 +45,12 @@ export default function Home() {
           <div
             aria-hidden='true'
             className='pointer-events-none absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80'>
-            <div
+            <div /*Creating a custom pinkish color gradient shape with clip-path to direct the way the shape is structured*/
               style={{
                 clipPath:
                   'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
               }}
+              // The ones in angle brackets are custom values
               className='relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]'
             />
           </div>
@@ -85,7 +86,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Feature section */}
+      {/* Feature section - Showcase what the app can do*/}
       <div className='mx-auto mb-32 mt-32 max-w-5xl sm:mt-56'>
         <div className='mb-12 px-6 lg:px-8'>
           <div className='mx-auto max-w-2xl sm:text-center'>
