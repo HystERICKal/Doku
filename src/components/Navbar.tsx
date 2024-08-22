@@ -6,30 +6,30 @@ import {
   RegisterLink,
   getKindeServerSession,
 } from '@kinde-oss/kinde-auth-nextjs/server'
-
 import { ArrowRight } from 'lucide-react'
-// import UserAccountNav from './UserAccountNav'
-// import MobileNav from './MobileNav'
+import UserAccountNav from './UserAccountNav'
+import MobileNav from './MobileNav'
 
 const Navbar = () => {
   const { getUser } = getKindeServerSession()
   const user = getUser()
 
-  return ( //top-0 -> always at the top, z-30 -> above regular page content
+  return (
     <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all'>
-      <MaxWidthWrapper> {/*MaxWidthWrapper is a custom component that sets the max-width of the content*/}
+      <MaxWidthWrapper>
         <div className='flex h-14 items-center justify-between border-b border-zinc-200'>
           <Link
             href='/'
             className='flex z-40 font-semibold'>
-            <span>doku.</span>
+            <span>quill.</span>
           </Link>
 
-          {/* <MobileNav isAuth={!!user} /> */}
+          <MobileNav isAuth={!!user} />
 
           <div className='hidden items-center space-x-4 sm:flex'>
-            <>
-            <Link
+            {!user ? (
+              <>
+                <Link
                   href='/pricing'
                   className={buttonVariants({
                     variant: 'ghost',
@@ -51,7 +51,9 @@ const Navbar = () => {
                   Get started{' '}
                   <ArrowRight className='ml-1.5 h-5 w-5' />
                 </RegisterLink>
-
+              </>
+            ) : (
+              <>
                 <Link
                   href='/dashboard'
                   className={buttonVariants({
@@ -60,7 +62,18 @@ const Navbar = () => {
                   })}>
                   Dashboard
                 </Link>
-            </>       
+
+                <UserAccountNav
+                  name={
+                    !user.given_name || !user.family_name
+                      ? 'Your Account'
+                      : `${user.given_name} ${user.family_name}`
+                  }
+                  email={user.email ?? ''}
+                  imageUrl={user.picture ?? ''}
+                />
+              </>
+            )}
           </div>
         </div>
       </MaxWidthWrapper>
