@@ -122,7 +122,7 @@ export default function Home() {
               </span>
             </div>
           </li>
-          <li className='md:flex-1'>
+          <li className='md:flex-1'> {/*just copy and paste the top one no need to make it re-useable*/}
             <div className='flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4'>
               <span className='text-sm font-medium text-blue-600'>
                 Step 2
@@ -130,7 +130,7 @@ export default function Home() {
               <span className='text-xl font-semibold'>
                 Upload your PDF file
               </span>
-              <span className='mt-2 text-zinc-700'>
+              <span className='mt-2 text-zinc-700'> {/*The apostrostrophe in We'll below is to avoid build errors*/}
                 We&apos;ll process your file and make it
                 ready for you to chat with.
               </span>
@@ -152,7 +152,7 @@ export default function Home() {
           </li>
         </ol>
 
-        <div className='mx-auto max-w-6xl px-6 lg:px-8'>
+        <div className='mx-auto max-w-6xl px-6 lg:px-8'> {/*Copy the code from the above image and just change image path and dimensions*/}
           <div className='mt-16 flow-root sm:mt-24'>
             <div className='-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4'>
               <Image
