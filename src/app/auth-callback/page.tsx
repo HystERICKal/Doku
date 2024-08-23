@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { trpc } from '../_trpc/client'
 import { Loader2 } from 'lucide-react'
 
-const Page = () => {
+const Page = () => { //The purpose of this page is to sync the user with the database
   const router = useRouter()
 
   const searchParams = useSearchParams()
@@ -13,8 +13,8 @@ const Page = () => {
   trpc.authCallback.useQuery(undefined, {
     onSuccess: ({ success }) => {
       if (success) {
-        // user is synced to db
-        router.push(origin ? `/${origin}` : '/dashboard')
+        // user is synced to database
+        router.push(origin ? `/${origin}` : '/dashboard') //that dollar sign thing is a template literal
       }
     },
     onError: (err) => {

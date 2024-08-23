@@ -36,12 +36,12 @@ const UserAccountNav = async ({
           <Avatar className='relative w-8 h-8'>
             {imageUrl ? (
               <div className='relative aspect-square h-full w-full'>
-                <Image
+                {/* <Image
                   fill
                   src={imageUrl}
                   alt='profile picture'
                   referrerPolicy='no-referrer'
-                />
+                /> */}
               </div>
             ) : (
               <AvatarFallback>

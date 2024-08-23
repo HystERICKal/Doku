@@ -22,7 +22,8 @@ const Providers = ({ children }: PropsWithChildren) => {
   )
 
   return (
-    <trpc.Provider
+    // enables use of trpc in the entire app
+    <trpc.Provider 
       client={trpcClient}
       queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>

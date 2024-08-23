@@ -16,8 +16,8 @@ import {
 import { PLANS } from '@/config/stripe'
 
 export const appRouter = router({
-  authCallback: publicProcedure.query(async () => {
-    const { getUser } = getKindeServerSession()
+  authCallback: publicProcedure.query(async () => { // api route for auth callback
+    const { getUser } = getKindeServerSession() //get user id and email from session
     const user = getUser()
 
     if (!user.id || !user.email)
@@ -31,7 +31,7 @@ export const appRouter = router({
     })
 
     if (!dbUser) {
-      // create user in db
+      // create user in the database
       await db.user.create({
         data: {
           id: user.id,

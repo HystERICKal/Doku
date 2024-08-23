@@ -3,7 +3,9 @@ import { Metadata } from 'next'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  //classValue needs clsx package to be installed
+  //tailwind-merge (px-2 py-2 helps to merge it to => p-2)
+  return twMerge(clsx(inputs)) //twMerge needs tailwind-merge package to be installed
 }
 
 export function absoluteUrl(path: string) {

@@ -14,9 +14,9 @@ const Navbar = () => {
   const { getUser } = getKindeServerSession()
   const user = getUser()
 
-  return (
+  return ( //top-0 -> always at the top, z-30 -> above regular page content
     <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all'>
-      <MaxWidthWrapper>
+      <MaxWidthWrapper> {/*MaxWidthWrapper is a custom component that sets the max-width of the content*/}
         <div className='flex h-14 items-center justify-between border-b border-zinc-200'>
           <Link
             href='/'
