@@ -16,25 +16,29 @@ import {
 import { PLANS } from '@/config/stripe'
 
 export const appRouter = router({
+  //below are all the api routes in the app, built  with the help of trpc
   authCallback: publicProcedure.query(async () => { // api route for auth callback
     const { getUser } = getKindeServerSession() //get user id and email from session
     const user = getUser()
 
+    //Below is the code for the Guard Clause
+    //A Guard Clause is a technique derived from the fail-fast method whose purpose 
+        // is to validate a condition and immediately stop the code execution about the result of the validation.
     if (!user.id || !user.email)
       throw new TRPCError({ code: 'UNAUTHORIZED' })
 
     // check if the user is in the database
-    const dbUser = await db.user.findFirst({
+    const dbUser = await db.user.findFirst({ //This dbUser is the user in the database
       where: {
-        id: user.id,
+        id: user.id, //this user is the logged in user
       },
     })
 
-    if (!dbUser) {
+    if (!dbUser) { //if user doesnt exist in database
       // create user in the database
       await db.user.create({
         data: {
-          id: user.id,
+          id: user.id, //id is the id in the database and user.id is the id frome Kinde
           email: user.email,
         },
       })
@@ -42,12 +46,17 @@ export const appRouter = router({
 
     return { success: true }
   }),
-  getUserFiles: privateProcedure.query(async ({ ctx }) => {
+  //api endpoint
+  //Pass in a userID and get back all the files a user owns
+  //make it a private procedure so that not everyone can query the api endpoint
+  //only logged in users should be able to call the api
+  //define auth procedure in "trpc->trpc.ts" to ensure only someone who is authenticated can call this procedure 
+  getUserFiles: privateProcedure.query(async ({ ctx }) => { //destructure the context
     const { userId } = ctx
 
-    return await db.file.findMany({
+    return await db.file.findMany({ 
       where: {
-        userId,
+        userId, //find instances where this user id matches the user id above
       },
     })
   }),
@@ -193,21 +202,21 @@ export const appRouter = router({
       return file
     }),
 
-  deleteFile: privateProcedure
-    .input(z.object({ id: z.string() }))
-    .mutation(async ({ ctx, input }) => {
+  deleteFile: privateProcedure //user needs to be logged in for this to work
+    .input(z.object({ id: z.string() })) //zod -> "z" is a schema validation library to validate the input gotten from the server side
+    .mutation(async ({ ctx, input }) => { //business logic, train this to the input, mutation changes data, query fetches data
       const { userId } = ctx
 
-      const file = await db.file.findFirst({
+      const file = await db.file.findFirst({ //find first file where...
         where: {
           id: input.id,
-          userId,
+          userId, //search for files that the currently logged in user owns to make sure they don't delte someone elses file
         },
       })
 
-      if (!file) throw new TRPCError({ code: 'NOT_FOUND' })
+      if (!file) throw new TRPCError({ code: 'NOT_FOUND' }) //if there is no such file that the user owns and is trying to delete
 
-      await db.file.delete({
+      await db.file.delete({ //if abpveis successful and indeed user is trying to delete one of their own files then proceed...
         where: {
           id: input.id,
         },

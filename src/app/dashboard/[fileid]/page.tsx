@@ -7,27 +7,27 @@ import { notFound, redirect } from 'next/navigation'
 
 interface PageProps {
   params: {
-    fileid: string
+    fileid: string //name needs to match the name of the folder i.e [fileid]
   }
 }
 
 const Page = async ({ params }: PageProps) => {
-  const { fileid } = params
+  const { fileid } = params //derstucture the file id from params
 
   const { getUser } = getKindeServerSession()
   const user = getUser()
 
-  if (!user || !user.id)
+  if (!user || !user.id) //if no user or they aren't logged in
     redirect(`/auth-callback?origin=dashboard/${fileid}`)
 
-  const file = await db.file.findFirst({
+  const file = await db.file.findFirst({ //find the first file where
     where: {
-      id: fileid,
-      userId: user.id,
+      id: fileid, // id in database matches page id from url
+      userId: user.id, //matches the logged in user so that one user can't see another's file
     },
   })
 
-  if (!file) notFound()
+  if (!file) notFound() //display a 404 error page if the file is not found in the database
 
   const plan = await getUserSubscriptionPlan()
 
@@ -42,6 +42,7 @@ const Page = async ({ params }: PageProps) => {
           </div>
         </div>
 
+        {/*flex-[0.75] makes the chatwrapper smaller in width than the pdf render */}
         <div className='shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0'>
           <ChatWrapper isSubscribed={plan.isSubscribed} fileId={file.id} />
         </div>

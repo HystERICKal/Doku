@@ -1,3 +1,4 @@
+//prisma instanciation -makes sure there is a single cache instance of prisma throught the entire application
 import { PrismaClient } from '@prisma/client'
 
 declare global {

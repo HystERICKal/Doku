@@ -24,10 +24,10 @@ const Dashboard = ({subscriptionPlan}: PageProps) => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] =
     useState<string | null>(null)
 
-  const utils = trpc.useContext()
+  const utils = trpc.useContext() //invalidates the query below forcing it to refresh the data so that when it refreshes, it will see that the file no longer exists since it was deleted and remove it from the page without the user having to reload the page
 
   const { data: files, isLoading } =
-    trpc.getUserFiles.useQuery()
+    trpc.getUserFiles.useQuery() //client side utility that allows data to be fetched
 
   const { mutate: deleteFile } =
     trpc.deleteFile.useMutation({
@@ -35,10 +35,10 @@ const Dashboard = ({subscriptionPlan}: PageProps) => {
         utils.getUserFiles.invalidate()
       },
       onMutate({ id }) {
-        setCurrentlyDeletingFile(id)
+        setCurrentlyDeletingFile(id) //get the id of the current file being deleted so that the loading state can only be shown on this file and not all files
       },
       onSettled() {
-        setCurrentlyDeletingFile(null)
+        setCurrentlyDeletingFile(null) //when everything is done, set it back to null to remove the loading state
       },
     })
 
@@ -49,28 +49,27 @@ const Dashboard = ({subscriptionPlan}: PageProps) => {
           My Files
         </h1>
 
-        <UploadButton isSubscribed={subscriptionPlan.isSubscribed} />
+        <UploadButton isSubscribed={subscriptionPlan.isSubscribed} /> {/* separate component */}
       </div>
 
       {/* display all user files */}
-      {files && files?.length !== 0 ? (
+      {files && files?.length !== 0 ? ( // if we have 1 or more files...
         <ul className='mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3'>
           {files
             .sort(
               (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
             )
             .map((file) => (
               <li
-                key={file.id}
+                key={file.id} //everytime when map is is used one needs a key
                 className='col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg'>
                 <Link
-                  href={`/dashboard/${file.id}`}
+                  href={`/dashboard/${file.id}`} //made possible by using dynamic next.js routes
                   className='flex flex-col gap-2'>
                   <div className='pt-6 px-6 flex w-full items-center justify-between space-x-6'>
-                    <div className='h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500' />
-                    <div className='flex-1 truncate'>
+                    <div className='h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500' /> {/*just for decoration */}
+                    <div className='flex-1 truncate'> {/*truncate to cut off file names if they are really long */}
                       <div className='flex items-center space-x-3'>
                         <h3 className='truncate text-lg font-medium text-zinc-900'>
                           {file.name}
@@ -102,7 +101,7 @@ const Dashboard = ({subscriptionPlan}: PageProps) => {
                     className='w-full'
                     variant='destructive'>
                     {currentlyDeletingFile === file.id ? (
-                      <Loader2 className='h-4 w-4 animate-spin' />
+                      <Loader2 className='h-4 w-4 animate-spin' /> //when delete button is clicked, then activate this loading stage
                     ) : (
                       <Trash className='h-4 w-4' />
                     )}
@@ -111,15 +110,15 @@ const Dashboard = ({subscriptionPlan}: PageProps) => {
               </li>
             ))}
         </ul>
-      ) : isLoading ? (
-        <Skeleton height={100} className='my-2' count={3} />
-      ) : (
+      ) : isLoading ? ( //no files yet or files is undefined...if route is loading
+        <Skeleton height={100} className='my-2' count={3} /> //when you refresh page you see this while page is loading
+      ) : ( //not loading and no files yet...
         <div className='mt-16 flex flex-col items-center gap-2'>
           <Ghost className='h-8 w-8 text-zinc-800' />
           <h3 className='font-semibold text-xl'>
             Pretty empty around here
           </h3>
-          <p>Let&apos;s upload your first PDF.</p>
+          <p>Please upload your first PDF using the &#x201F;Upload PDF&#x201F; button above.</p>
         </div>
       )}
     </main>

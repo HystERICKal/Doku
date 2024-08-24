@@ -17,7 +17,7 @@ const Page = async () => {
     }
   })
 
-  if(!dbUser) redirect('/auth-callback?origin=dashboard')
+  if(!dbUser) redirect('/auth-callback?origin=dashboard') //if not synced to database yet send them back to auth-callback to make the syn happen
 
   const subscriptionPlan = await getUserSubscriptionPlan()
 

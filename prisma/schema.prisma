@@ -18,7 +18,7 @@ model User {
   id    String @id @unique //matches kinde user id
   email String @unique
 
-  File    File[]
+  File    File[] //each user can have multiple files
   Message Message[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id") //not every user can be a customer
@@ -27,7 +27,7 @@ model User {
   stripeCurrentPeriodEnd DateTime? @map(name: "stripe_current_period_end")
 }
 
-enum UploadStatus {
+enum UploadStatus { //all possible states there could be for a file upload (everything that could go right or wrong)
   PENDING
   PROCESSING
   FAILED
@@ -35,10 +35,10 @@ enum UploadStatus {
 }
 
 model File {
-  id   String @id @default(cuid())
+  id   String @id @default(cuid()) //cuid -> collision resistance unique identifier
   name String
 
-  uploadStatus UploadStatus @default(PENDING)
+  uploadStatus UploadStatus @default(PENDING) //an enum
 
   url      String
   key      String

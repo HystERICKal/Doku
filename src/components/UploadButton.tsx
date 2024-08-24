@@ -1,5 +1,6 @@
 'use client'
 
+//this is a client component since some interactivity is expected like clicking on button and a model opening
 import { useState } from 'react'
 import {
   Dialog,
@@ -44,7 +45,7 @@ const UploadDropzone = ({
   )
 
   const startSimulatedProgress = () => {
-    setUploadProgress(0)
+    setUploadProgress(0) //reset upload progress incase there was a previous progress bar simulation that happened before this
 
     const interval = setInterval(() => {
       setUploadProgress((prevProgress) => {
@@ -116,7 +117,8 @@ const UploadDropzone = ({
                 </p>
               </div>
 
-              {acceptedFiles && acceptedFiles[0] ? (
+              {/*Once you drag and drop a pdf file... */}
+              {acceptedFiles && acceptedFiles[0] ? ( //validates to true once you drag in a file
                 <div className='max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200'>
                   <div className='px-3 py-2 h-full grid place-items-center'>
                     <File className='h-4 w-4 text-blue-500' />
@@ -169,7 +171,8 @@ const UploadButton = ({
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   return (
-    <Dialog
+    //dialog box from shadcn ui
+    <Dialog 
       open={isOpen}
       onOpenChange={(v) => {
         if (!v) {
@@ -178,7 +181,7 @@ const UploadButton = ({
       }}>
       <DialogTrigger
         onClick={() => setIsOpen(true)}
-        asChild>
+        asChild> 
         <Button>Upload PDF</Button>
       </DialogTrigger>
 
