@@ -25,14 +25,11 @@ const ChatWrapper = ({
       },
       {
         refetchInterval: (data) =>
-          data?.status === 'SUCCESS' ||
-          data?.status === 'FAILED'
-            ? false
-            : 500,
+          data?.status === 'SUCCESS' || data?.status === 'FAILED' ? false : 500, //keep polling the server every 500ms until the status is SUCCESS or FAILED
       }
     )
 
-  if (isLoading)
+  if (isLoading) //if the file is still loading show the loading spinner and text to the user
     return (
       <div className='relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2'>
         <div className='flex-1 flex justify-center items-center flex-col mb-28'>
@@ -47,11 +44,11 @@ const ChatWrapper = ({
           </div>
         </div>
 
-        <ChatInput isDisabled />
+        <ChatInput isDisabled /> {/*disable the chat input while the file is still loading*/}
       </div>
     )
 
-  if (data?.status === 'PROCESSING')
+  if (data?.status === 'PROCESSING') //if the file is still processing show the processing spinner and text to the user
     return (
       <div className='relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2'>
         <div className='flex-1 flex justify-center items-center flex-col mb-28'>
@@ -66,11 +63,11 @@ const ChatWrapper = ({
           </div>
         </div>
 
-        <ChatInput isDisabled />
+        <ChatInput isDisabled /> {/*disable the chat input while the file is processing*/}
       </div>
     )
 
-  if (data?.status === 'FAILED')
+  if (data?.status === 'FAILED') //if the file processing failed show the error message to the user
     return (
       <div className='relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2'>
         <div className='flex-1 flex justify-center items-center flex-col mb-28'>
@@ -104,7 +101,7 @@ const ChatWrapper = ({
           </div>
         </div>
 
-        <ChatInput isDisabled />
+        <ChatInput isDisabled /> {/*disable the chat input while the file processing failed*/}
       </div>
     )
 

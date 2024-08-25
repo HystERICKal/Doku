@@ -119,29 +119,29 @@ export const appRouter = router({
     }
   ),
 
-  getFileMessages: privateProcedure
+  getFileMessages: privateProcedure //fetch all messages that were sent to a file, user needs to be logged in for this to work
     .input(
       z.object({
-        limit: z.number().min(1).max(100).nullish(),
-        cursor: z.string().nullish(),
-        fileId: z.string(),
+        limit: z.number().min(1).max(100).nullish(), //limit the number of messages that can be fetched
+        cursor: z.string().nullish(), //helps to load more previous messages in the chat window as you scroll up
+        fileId: z.string(), //fileId is the id of the file to know which file the messages are associated with
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => { //fetch all the messages that are to be displayed in the chat window
       const { userId } = ctx
       const { fileId, cursor } = input
-      const limit = input.limit ?? INFINITE_QUERY_LIMIT
+      const limit = input.limit ?? INFINITE_QUERY_LIMIT //if limit is not provided, set it to the default limit which is the INFINITE_QUERY_LIMIT which is 10 messages so only the last 10 messages will be loaded
 
-      const file = await db.file.findFirst({
+      const file = await db.file.findFirst({ //find the file in the database
         where: {
           id: fileId,
           userId,
         },
       })
 
-      if (!file) throw new TRPCError({ code: 'NOT_FOUND' })
+      if (!file) throw new TRPCError({ code: 'NOT_FOUND' }) //if the file is not found, return a not found response
 
-      const messages = await db.message.findMany({
+      const messages = await db.message.findMany({ //find many messages in the database
         take: limit + 1,
         where: {
           fileId,
@@ -149,19 +149,19 @@ export const appRouter = router({
         orderBy: {
           createdAt: 'desc',
         },
-        cursor: cursor ? { id: cursor } : undefined,
+        cursor: cursor ? { id: cursor } : undefined, //if cursor is provided, get the messages that are older than the cursor
         select: {
           id: true,
-          isUserMessage: true,
+          isUserMessage: true, //if the message is from the user
           createdAt: true,
           text: true,
         },
       })
 
-      let nextCursor: typeof cursor | undefined = undefined
-      if (messages.length > limit) {
-        const nextItem = messages.pop()
-        nextCursor = nextItem?.id
+      let nextCursor: typeof cursor | undefined = undefined //initialize the next cursor
+      if (messages.length > limit) { //if the number of messages is greater than the limit
+        const nextItem = messages.pop() //get the last message
+        nextCursor = nextItem?.id //set the next cursor to the id of the last message
       }
 
       return {
@@ -170,19 +170,19 @@ export const appRouter = router({
       }
     }),
 
-  getFileUploadStatus: privateProcedure
-    .input(z.object({ fileId: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const file = await db.file.findFirst({
+  getFileUploadStatus: privateProcedure //user needs to be logged in for this to work
+    .input(z.object({ fileId: z.string() })) //zod -> "z" is a schema validation library to validate the input gotten from the server side
+    .query(async ({ input, ctx }) => { //business logic, train this to the input, mutation changes data, query fetches data
+      const file = await db.file.findFirst({ //find first file where...
         where: {
-          id: input.fileId,
+          id: input.fileId, 
           userId: ctx.userId,
         },
       })
 
-      if (!file) return { status: 'PENDING' as const }
+      if (!file) return { status: 'PENDING' as const } //if file is not found in the database
 
-      return { status: file.uploadStatus }
+      return { status: file.uploadStatus } //return the status of the file
     }),
 
     //api endpoint for polling the status of the file upload to check if the file is ready to be viewed and file has been successfuly uploaded

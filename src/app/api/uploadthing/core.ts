@@ -56,18 +56,18 @@ const onUploadComplete = async ({
     },
   })
 
-  try {
-    const response = await fetch(
+  try { 
+    const response = await fetch( //fetch the file from the s3 bucket
       `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
     )
 
-    const blob = await response.blob()
+    const blob = await response.blob() //get the file as a blob
 
-    const loader = new PDFLoader(blob)
+    const loader = new PDFLoader(blob) //load the file as a pdf into memory
 
-    const pageLevelDocs = await loader.load()
+    const pageLevelDocs = await loader.load() //extract page level text from the pdf
 
-    const pagesAmt = pageLevelDocs.length
+    const pagesAmt = pageLevelDocs.length //get the number of pages in the pdf...each element in the array is a page
 
     const { subscriptionPlan } = metadata
     const { isSubscribed } = subscriptionPlan
@@ -94,24 +94,24 @@ const onUploadComplete = async ({
       })
     }
 
-    // vectorize and index entire document
-    const pinecone = await getPineconeClient()
-    const pineconeIndex = pinecone.Index('quill')
+    // vectorize and index entire document [check Langchain js documentation for better understanding]
+    const pinecone = await getPineconeClient() //get the pinecone client from the pinecone library (pinecone is a vector store)
+    const pineconeIndex = pinecone.Index('doku') //create a new index in the pinecone client
 
-    const embeddings = new OpenAIEmbeddings({
+    const embeddings = new OpenAIEmbeddings({ //create a new embeddings object using the openai api key
       openAIApiKey: process.env.OPENAI_API_KEY,
     })
 
-    await PineconeStore.fromDocuments(
+    await PineconeStore.fromDocuments( //create a new pinecone store from the documents in the pdf
       pageLevelDocs,
-      embeddings,
+      embeddings, //tell langchain how to genarate the vectors from the text using these openAI models as the embeddings
       {
-        pineconeIndex,
+        pineconeIndex, //the index in the pinecone client
         namespace: createdFile.id,
       }
     )
 
-    await db.file.update({
+    await db.file.update({ //update the file in the database
       data: {
         uploadStatus: 'SUCCESS',
       },
@@ -120,7 +120,7 @@ const onUploadComplete = async ({
       },
     })
   } catch (err) {
-    await db.file.update({
+    await db.file.update({ //if there is an error, update the file in the database
       data: {
         uploadStatus: 'FAILED',
       },

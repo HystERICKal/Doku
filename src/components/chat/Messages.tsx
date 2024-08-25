@@ -11,20 +11,20 @@ interface MessagesProps {
   fileId: string
 }
 
-const Messages = ({ fileId }: MessagesProps) => {
+const Messages = ({ fileId }: MessagesProps) => { //create a component for the messages
   const { isLoading: isAiThinking } =
     useContext(ChatContext)
 
-  const { data, isLoading, fetchNextPage } =
-    trpc.getFileMessages.useInfiniteQuery(
+  const { data, isLoading, fetchNextPage } = //use the useInfiniteQuery hook to fetch the next page of messages
+    trpc.getFileMessages.useInfiniteQuery( //fetch the messages that are to be displayed in the chat window
       {
-        fileId,
-        limit: INFINITE_QUERY_LIMIT,
+        fileId, //fileId is the id of the file to know which file the messages are associated with
+        limit: INFINITE_QUERY_LIMIT, //limit the number of messages that can be fetched
       },
       {
-        getNextPageParam: (lastPage) =>
-          lastPage?.nextCursor,
-        keepPreviousData: true,
+        getNextPageParam: (lastPage) => //get the next page of messages
+          lastPage?.nextCursor, //get the next cursor
+        keepPreviousData: true, //keep the previous data
       }
     )
 

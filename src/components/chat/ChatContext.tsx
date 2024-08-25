@@ -12,13 +12,13 @@ import { INFINITE_QUERY_LIMIT } from '@/config/infinite-query'
 type StreamResponse = {
   addMessage: () => void
   message: string
-  handleInputChange: (
+  handleInputChange: ( //create a type for the handleInputChange function
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => void
   isLoading: boolean
 }
 
-export const ChatContext = createContext<StreamResponse>({
+export const ChatContext = createContext<StreamResponse>({ //create a context for the chat. This context will be used to pass the message, handleInputChange and isLoading to the children components
   addMessage: () => {},
   message: '',
   handleInputChange: () => {},
@@ -30,26 +30,28 @@ interface Props {
   children: ReactNode
 }
 
-export const ChatContextProvider = ({
+export const ChatContextProvider = ({ //create a provider for the chat context
   fileId,
   children,
 }: Props) => {
-  const [message, setMessage] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('') //initialize the message state
+  const [isLoading, setIsLoading] = useState<boolean>(false) //initialize the isLoading state
 
   const utils = trpc.useContext()
 
-  const { toast } = useToast()
+  const { toast } = useToast() //use the useToast hook to show a toast message to the user
 
   const backupMessage = useRef('')
 
-  const { mutate: sendMessage } = useMutation({
-    mutationFn: async ({
+  //This mutation allows for sending a message to an api endpoint
+  //tRPC will not be used since we need to stream back a response from the api to the clientside (ChatContextProvider) and in tRPC that doesn't work, it only works for jSON responses
+  const { mutate: sendMessage } = useMutation({ //use the useMutation hook to send a message
+    mutationFn: async ({ //pass a mutation function that takes in a message. This must be done now since tRPC is not being used
       message,
     }: {
       message: string
     }) => {
-      const response = await fetch('/api/message', {
+      const response = await fetch('/api/message', { //fetch the message from the api
         method: 'POST',
         body: JSON.stringify({
           fileId,
@@ -57,11 +59,11 @@ export const ChatContextProvider = ({
         }),
       })
 
-      if (!response.ok) {
+      if (!response.ok) { //if the response is not ok, throw an error
         throw new Error('Failed to send message')
       }
 
-      return response.body
+      return response.body 
     },
     onMutate: async ({ message }) => {
       backupMessage.current = message
@@ -214,15 +216,16 @@ export const ChatContextProvider = ({
     },
   })
 
-  const handleInputChange = (
+  const handleInputChange = ( //create a function to handle the input change event
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     setMessage(e.target.value)
   }
 
-  const addMessage = () => sendMessage({ message })
+  const addMessage = () => sendMessage({ message }) //create a function to send a message
 
   return (
+    
     <ChatContext.Provider
       value={{
         addMessage,

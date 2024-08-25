@@ -4,22 +4,22 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-generator client {
+generator client { //this is the generator that will generate the prisma client
   provider = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
-datasource db {
+datasource db { //this is the database connection
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
+model User { //this is the user model
   id    String @id @unique //matches kinde user id
   email String @unique
 
   File    File[] //each user can have multiple files
-  Message Message[]
+  Message Message[] //each user can have multiple messages
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id") //not every user can be a customer
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id") //mapped to the name of...
@@ -34,15 +34,15 @@ enum UploadStatus { //all possible states there could be for a file upload (ever
   SUCCESS
 }
 
-model File {
+model File { //this is the file model
   id   String @id @default(cuid()) //cuid -> collision resistance unique identifier
-  name String
+  name String //name of the file
 
-  uploadStatus UploadStatus @default(PENDING) //an enum
+  uploadStatus UploadStatus @default(PENDING) // an enum where default value is pending until the file is uploaded and processed
 
-  url      String
-  key      String
-  messages Message[]
+  url      String //url to the file in the cloud
+  key      String //key to the file in the cloud
+  messages Message[] //each file can have multiple messages
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,11 +50,11 @@ model File {
   userId    String?
 }
 
-model Message {
-  id   String @id @default(cuid())
-  text String @db.Text()
+model Message { 
+  id   String @id @default(cuid()) //cuid -> collision resistance unique identifier
+  text String @db.Text() //text is a type that can store a lot of text
 
-  isUserMessage Boolean
+  isUserMessage Boolean //if the message is from the user or the bot
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

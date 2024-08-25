@@ -9,14 +9,9 @@ interface ChatInputProps {
 }
 
 const ChatInput = ({ isDisabled }: ChatInputProps) => {
-  const {
-    addMessage,
-    handleInputChange,
-    isLoading,
-    message,
-  } = useContext(ChatContext)
+  const {addMessage, handleInputChange, isLoading, message,} = useContext(ChatContext)
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null) //shift focus back to the textarea 
 
   return (
     <div className='absolute bottom-0 left-0 w-full'>
@@ -32,12 +27,12 @@ const ChatInput = ({ isDisabled }: ChatInputProps) => {
                 onChange={handleInputChange}
                 value={message}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
+                  if (e.key === 'Enter' && !e.shiftKey) { //if the user presses the enter key and the shift key is not pressed
                     e.preventDefault()
 
-                    addMessage()
+                    addMessage() //then send message
 
-                    textareaRef.current?.focus()
+                    textareaRef.current?.focus()//shift focus back to the textarea
                   }
                 }}
                 placeholder='Enter your question...'
@@ -45,7 +40,7 @@ const ChatInput = ({ isDisabled }: ChatInputProps) => {
               />
 
               <Button
-                disabled={isLoading || isDisabled}
+                disabled={isLoading || isDisabled} //loading means the message is being sent to the api, isDisabled means the chat input is disabled
                 className='absolute bottom-1.5 right-[8px]'
                 aria-label='send message'
                 onClick={() => {
