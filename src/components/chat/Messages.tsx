@@ -28,14 +28,14 @@ const Messages = ({ fileId }: MessagesProps) => { //create a component for the m
       }
     )
 
-  const messages = data?.pages.flatMap(
+  const messages = data?.pages.flatMap( //get the messages from the data
     (page) => page.messages
   )
 
-  const loadingMessage = {
-    createdAt: new Date().toISOString(),
-    id: 'loading-message',
-    isUserMessage: false,
+  const loadingMessage = { //create a loading message to show the user that the AI is thinking
+    createdAt: new Date().toISOString(), //set the created at date to the current date
+    id: 'loading-message', //set the id of the message to 'loading-message'
+    isUserMessage: false, //set the message to be from the assistant
     text: (
       <span className='flex h-full items-center justify-center'>
         <Loader2 className='h-4 w-4 animate-spin' />
@@ -43,9 +43,9 @@ const Messages = ({ fileId }: MessagesProps) => { //create a component for the m
     ),
   }
 
-  const combinedMessages = [
-    ...(isAiThinking ? [loadingMessage] : []),
-    ...(messages ?? []),
+  const combinedMessages = [ //combine the messages to be displayed in the chat window with the loading message
+    ...(isAiThinking ? [loadingMessage] : []), //if the AI is thinking, show the loading message else show the messages
+    ...(messages ?? []), //if there are messages, show them else show an empty array
   ]
 
   const lastMessageRef = useRef<HTMLDivElement>(null)
@@ -63,13 +63,13 @@ const Messages = ({ fileId }: MessagesProps) => { //create a component for the m
 
   return (
     <div className='flex max-h-[calc(100vh-3.5rem-7rem)] border-zinc-200 flex-1 flex-col-reverse gap-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch'>
-      {combinedMessages && combinedMessages.length > 0 ? (
-        combinedMessages.map((message, i) => {
-          const isNextMessageSamePerson =
+      {combinedMessages && combinedMessages.length > 0 ? ( //if there are messages to be displayed in the chat window show them
+        combinedMessages.map((message, i) => { //map through the messages to display them in the chat window
+          const isNextMessageSamePerson = //check if the next message is from the same person
             combinedMessages[i - 1]?.isUserMessage ===
-            combinedMessages[i]?.isUserMessage
+            combinedMessages[i]?.isUserMessage //if the previous message is from the same person as the current message, set isNextMessageSamePerson to true
 
-          if (i === combinedMessages.length - 1) {
+          if (i === combinedMessages.length - 1) { //if the current message is the last message
             return (
               <Message
                 ref={ref}
@@ -93,7 +93,7 @@ const Messages = ({ fileId }: MessagesProps) => { //create a component for the m
         })
       ) : isLoading ? (
         <div className='w-full flex flex-col gap-2'>
-          <Skeleton className='h-16' />
+          <Skeleton className='h-16' /> {/*show the loading skeleton while the messages are loading*/}
           <Skeleton className='h-16' />
           <Skeleton className='h-16' />
           <Skeleton className='h-16' />
