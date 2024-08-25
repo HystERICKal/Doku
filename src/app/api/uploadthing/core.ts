@@ -129,6 +129,7 @@ const onUploadComplete = async ({
   }
 }
 
+// This is the file router that will be used in the API route
 export const ourFileRouter = {
   freePlanUploader: f({ pdf: { maxFileSize: '4MB' } })
     .middleware(middleware)

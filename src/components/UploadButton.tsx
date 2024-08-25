@@ -44,18 +44,18 @@ const UploadDropzone = ({
     }
   )
 
-  const startSimulatedProgress = () => {
+  const startSimulatedProgress = () => { //this function simulates the progress of the file upload and it should start immediately a user drops in a file for upload
     setUploadProgress(0) //reset upload progress incase there was a previous progress bar simulation that happened before this
 
     const interval = setInterval(() => {
-      setUploadProgress((prevProgress) => {
+      setUploadProgress((prevProgress) => { //when setting a state you can get access to the previous value in the callback function as the first parameter
         if (prevProgress >= 95) {
-          clearInterval(interval)
-          return prevProgress
+          clearInterval(interval)// don't update the progress past 95 when i'm not sure if file is uploaded successfully(invalidate the whole process)
+          return prevProgress //prevProgress at this stage == 95%
         }
-        return prevProgress + 5
+        return prevProgress + 5 //increment by 5% every 500ms
       })
-    }, 500)
+    }, 500)//500ms
 
     return interval
   }
@@ -66,9 +66,12 @@ const UploadDropzone = ({
       onDrop={async (acceptedFile) => {
         setIsUploading(true)
 
-        const progressInterval = startSimulatedProgress()
+        const progressInterval = startSimulatedProgress() //start the progress bar simulation
 
-        // handle file uploading
+        // handle file uploading here
+
+        // await new Promise((resolve) => setTimeout(resolve, 2000)) //simulate a 2 seconds delay to upload the file
+
         const res = await startUpload(acceptedFile)
 
         if (!res) {
@@ -91,8 +94,8 @@ const UploadDropzone = ({
           })
         }
 
-        clearInterval(progressInterval)
-        setUploadProgress(100)
+        clearInterval(progressInterval) //stop the progress bar simulation
+        setUploadProgress(100) //set the progress bar to 100% once the file is uploaded to inform the user that the file is uploaded successfully
 
         startPolling({ key })
       }}>
