@@ -27,7 +27,7 @@ export default function RootLayout({
             'min-h-screen font-sans antialiased grainy', // grainy is a custom css class mapped out in globals.css
             inter.className
           )}>
-          <Toaster />
+          <Toaster /> {/*Toast notifications*/}
           <Navbar />
           {children} {/*All the pages inside the app i.e. landing page e.t.c*/}
         </body>

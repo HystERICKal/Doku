@@ -34,13 +34,14 @@ const UploadDropzone = ({
     isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
   )
 
-  const { mutate: startPolling } = trpc.getFile.useMutation(
+  //handle polling the server to check if the file is processed and ready to be viewed and that the database is synchronized with uploadthing servers
+  const { mutate: startPolling } = trpc.getFile.useMutation( //this has to be triggered to run, won't run on render...mutate function has to be explicitly called to make this start polling
     {
-      onSuccess: (file) => {
-        router.push(`/dashboard/${file.id}`)
+      onSuccess: (file) => { //if the file is found in the database
+        router.push(`/dashboard/${file.id}`) //push the file into the url and redirect the user to the page where they can view the file
       },
-      retry: true,
-      retryDelay: 500,
+      retry: true, //retry the polling if it fails...keep polling until the file is found in the database
+      retryDelay: 500, //retry every 500ms
     }
   )
 
@@ -72,9 +73,9 @@ const UploadDropzone = ({
 
         // await new Promise((resolve) => setTimeout(resolve, 2000)) //simulate a 2 seconds delay to upload the file
 
-        const res = await startUpload(acceptedFile)
+        const res = await startUpload(acceptedFile) //start the file upload
 
-        if (!res) {
+        if (!res) { //if the file upload fails
           return toast({
             title: 'Something went wrong',
             description: 'Please try again later',
@@ -82,11 +83,11 @@ const UploadDropzone = ({
           })
         }
 
-        const [fileResponse] = res
+        const [fileResponse] = res //get the file response from the server...take the first array element of the response since responce is of type array
 
-        const key = fileResponse?.key
+        const key = fileResponse?.key //get the key from the file response
 
-        if (!key) {
+        if (!key) { //if the key is not found
           return toast({
             title: 'Something went wrong',
             description: 'Please try again later',
@@ -97,7 +98,7 @@ const UploadDropzone = ({
         clearInterval(progressInterval) //stop the progress bar simulation
         setUploadProgress(100) //set the progress bar to 100% once the file is uploaded to inform the user that the file is uploaded successfully
 
-        startPolling({ key })
+        startPolling({ key }) //start polling the server to check if the file is processed and ready to be viewed meaning that it was uploaded successfully
       }}>
       {({ getRootProps, getInputProps, acceptedFiles }) => (
         <div
@@ -135,24 +136,24 @@ const UploadDropzone = ({
               {isUploading ? (
                 <div className='w-full mt-4 max-w-xs mx-auto'>
                   <Progress
-                    indicatorColor={
-                      uploadProgress === 100
+                    indicatorColor={ //changing color of the progress bar
+                      uploadProgress === 100 //if the file is uploaded successfully
                         ? 'bg-green-500'
                         : ''
                     }
                     value={uploadProgress}
                     className='h-1 w-full bg-zinc-200'
                   />
-                  {uploadProgress === 100 ? (
+                  {uploadProgress === 100 ? ( //if the file is uploaded successfully
                     <div className='flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2'>
-                      <Loader2 className='h-3 w-3 animate-spin' />
+                      <Loader2 className='h-3 w-3 animate-spin' /> {/*loader spinner icon*/}
                       Redirecting...
                     </div>
                   ) : null}
                 </div>
               ) : null}
 
-              <input
+              <input //invisible input element for file upload
                 {...getInputProps()}
                 type='file'
                 id='dropzone-file'

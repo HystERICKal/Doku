@@ -15,7 +15,7 @@ const nextConfig = {
     ]
   },
 
-  webpack: (
+  webpack: ( //this is to fix the error of canvas and encoding
     config,
     { buildId, dev, isServer, defaultLoaders, webpack }
   ) => {

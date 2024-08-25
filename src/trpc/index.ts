@@ -185,21 +185,22 @@ export const appRouter = router({
       return { status: file.uploadStatus }
     }),
 
-  getFile: privateProcedure
+    //api endpoint for polling the status of the file upload to check if the file is ready to be viewed and file has been successfuly uploaded
+  getFile: privateProcedure //user needs to be logged in for this to work
     .input(z.object({ key: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx
 
-      const file = await db.file.findFirst({
+      const file = await db.file.findFirst({ //check if file is in the database
         where: {
           key: input.key,
           userId,
         },
       })
 
-      if (!file) throw new TRPCError({ code: 'NOT_FOUND' })
+      if (!file) throw new TRPCError({ code: 'NOT_FOUND' }) //if file is not found in the database
 
-      return file
+      return file //return the file if it is found
     }),
 
   deleteFile: privateProcedure //user needs to be logged in for this to work

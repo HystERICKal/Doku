@@ -5,6 +5,7 @@ import * as ProgressPrimitive from '@radix-ui/react-progress'
 
 import { cn } from '@/lib/utils'
 
+//added a custom prop for the color of the progress bar...this is the type definition for the custom prop
 type ProgressProps = React.ComponentPropsWithoutRef<
   typeof ProgressPrimitive.Root
 > & {
@@ -14,7 +15,7 @@ type ProgressProps = React.ComponentPropsWithoutRef<
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   ProgressProps
->(({ className, value, indicatorColor, ...props }, ref) => (
+>(({ className, value, indicatorColor, ...props }, ref) => ( //added a custom prop for the color of the progress bar
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(

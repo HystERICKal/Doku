@@ -16,7 +16,7 @@ interface PdfFullscreenProps {
 }
 
 const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false) //fullscreen view should be closed by deafult
   const [numPages, setNumPages] = useState<number>()
 
   const { toast } = useToast()
@@ -27,12 +27,12 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
     <Dialog
       open={isOpen}
       onOpenChange={(v) => {
-        if (!v) {
-          setIsOpen(v)
+        if (!v) { //if it is not visible
+          setIsOpen(v) //toggle
         }
       }}>
       <DialogTrigger
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(true)} //when clicked, open the fullscreen view
         asChild>
         <Button
           variant='ghost'
@@ -41,8 +41,9 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
           <Expand className='h-4 w-4' />
         </Button>
       </DialogTrigger>
+      {/*this is what shows up in the popup */}
       <DialogContent className='max-w-7xl w-full'>
-        <SimpleBar
+        <SimpleBar //scrollbar on the sides of the pdf
           autoHide={false}
           className='max-h-[calc(100vh-10rem)] mt-6'>
           <div ref={ref}>
@@ -64,7 +65,7 @@ const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
               }
               file={fileUrl}
               className='max-h-full'>
-              {new Array(numPages).fill(0).map((_, i) => (
+              {new Array(numPages).fill(0).map((_, i) => ( //map over every page that is available so all pages can be shown
                 <Page
                   key={i}
                   width={width ? width : 1}
