@@ -47,11 +47,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [currPage, setCurrPage] = useState<number>(1) //track current page being viewed
   const [scale, setScale] = useState<number>(1) //track the scale size of the pdf
   const [rotation, setRotation] = useState<number>(0) //track the rotation of the pdf
-  const [renderedScale, setRenderedScale] = useState<
-    number | null
-  >(null)
+  const [renderedScale, setRenderedScale] = useState<number | null>(null) //keep track of the scale of the page that has been rendered already
 
-  const isLoading = renderedScale !== scale
+  const isLoading = renderedScale !== scale //if the rendered scale is not equal to the current scale, the pdf is still loading 
 
   const CustomPageValidator = z.object({ //validates the page number input
     page: z // z is a shorthand for zod which is a schema validation library that helps validate data
@@ -215,13 +213,13 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               }
               file={url}
               className='max-h-full'>
-              {isLoading && renderedScale ? (
+              {isLoading && renderedScale ? ( //if the pdf is still loading and the rendered scale is not null, show the pdf. This helps so that the pdf does not flicker when the scale is changed and users with slower machines don't just see a white screen when the pdf is loading to a bigger size
                 <Page
                   width={width ? width : 1} //width of the pdf -> helps pdf fit the screen when page is resized
                   pageNumber={currPage}
                   scale={scale}
                   rotate={rotation}
-                  key={'@' + renderedScale}
+                  key={'@' + renderedScale} //key to help react know that the pdf has changed and should re-render
                 />
               ) : null}
 
@@ -231,14 +229,14 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                 pageNumber={currPage}
                 scale={scale}
                 rotate={rotation}
-                key={'@' + scale}
+                key={'@' + scale} //key to help react know that the pdf has changed and should re-render
                 loading={
                   <div className='flex justify-center'>
                     <Loader2 className='my-24 h-6 w-6 animate-spin' />
                   </div>
                 }
                 onRenderSuccess={() =>
-                  setRenderedScale(scale)
+                  setRenderedScale(scale) //set the rendered scale to the current scale to indicate that the pdf has been rendered and hence has finished loading
                 }
               />
             </Document>
