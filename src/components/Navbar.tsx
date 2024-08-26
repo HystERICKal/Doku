@@ -10,9 +10,9 @@ import { ArrowRight } from 'lucide-react'
 import UserAccountNav from './UserAccountNav'
 import MobileNav from './MobileNav'
 
-const Navbar = () => {
-  const { getUser } = getKindeServerSession()
-  const user = getUser()
+const Navbar = () => { //create a function for the navbar
+  const { getUser } = getKindeServerSession() //get the user from the session
+  const user = getUser() //get the user
 
   return ( //top-0 -> always at the top, z-30 -> above regular page content
     <nav className='sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all'>
@@ -24,10 +24,10 @@ const Navbar = () => {
             <span>doku.</span>
           </Link>
 
-          <MobileNav isAuth={!!user} />
+          <MobileNav isAuth={!!user} /> {/*MobileNav is a custom component that shows the mobile navigation*/}
 
           <div className='hidden items-center space-x-4 sm:flex'>
-            {!user ? (
+            {!user ? ( //if the user is not logged in show the pricing, sign in, and get started buttons
               <>
                 <Link
                   href='/pricing'
@@ -52,7 +52,7 @@ const Navbar = () => {
                   <ArrowRight className='ml-1.5 h-5 w-5' />
                 </RegisterLink>
               </>
-            ) : (
+            ) : ( //if the user is logged in show the dashboard and user account nav
               <>
                 <Link
                   href='/dashboard'
@@ -64,7 +64,7 @@ const Navbar = () => {
                 </Link>
 
                 <UserAccountNav
-                  name={
+                  name={ //if the user has no name, show 'Your Account' else show the user's name
                     !user.given_name || !user.family_name
                       ? 'Your Account'
                       : `${user.given_name} ${user.family_name}`

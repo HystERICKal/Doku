@@ -14,27 +14,27 @@ import Link from 'next/link'
 import { Gem } from 'lucide-react'
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/server'
 
-interface UserAccountNavProps {
+interface UserAccountNavProps { //create an interface for the user account nav
   email: string | undefined
   name: string
   imageUrl: string
 }
 
-const UserAccountNav = async ({
+const UserAccountNav = async ({ //create a function for the user account nav
   email,
   imageUrl,
   name,
-}: UserAccountNavProps) => {
-  const subscriptionPlan = await getUserSubscriptionPlan()
+}: UserAccountNavProps) => {  //get the email, image url, and name of the user
+  const subscriptionPlan = await getUserSubscriptionPlan() //get the subscription plan the user is on
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         asChild
-        className='overflow-visible'>
-        <Button className='rounded-full h-8 w-8 aspect-square bg-slate-400'>
-          <Avatar className='relative w-8 h-8'>
-            {imageUrl ? (
+        className='overflow-visible'> {/*create a dropdown menu trigger*/}
+        <Button className='rounded-full h-8 w-8 aspect-square bg-slate-400'> {/*create a button for the user account nav*/}
+          <Avatar className='relative w-8 h-8'> {/*create an avatar for the user account nav*/}
+            {imageUrl ? ( //if there is an image url, display the image
               <div className='relative aspect-square h-full w-full'>
                 {/* <Image
                   fill
@@ -53,15 +53,15 @@ const UserAccountNav = async ({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='bg-white' align='end'>
+      <DropdownMenuContent className='bg-white' align='end'> {/*create a dropdown menu content*/}
         <div className='flex items-center justify-start gap-2 p-2'>
           <div className='flex flex-col space-y-0.5 leading-none'>
-            {name && (
+            {name && ( //if there is a name, display the name
               <p className='font-medium text-sm text-black'>
                 {name}
               </p>
             )}
-            {email && (
+            {email && ( //if there is an email, display the email
               <p className='w-[200px] truncate text-xs text-zinc-700'>
                 {email}
               </p>
@@ -69,14 +69,14 @@ const UserAccountNav = async ({
           </div>
         </div>
 
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator /> {/*create a dropdown menu separator*/}
 
-        <DropdownMenuItem asChild>
-          <Link href='/dashboard'>Dashboard</Link>
+        <DropdownMenuItem asChild>  {/*create a dropdown menu item*/}
+          <Link href='/dashboard'>Dashboard</Link>  {/*create a link to the dashboard*/}
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
-          {subscriptionPlan?.isSubscribed ? (
+        <DropdownMenuItem asChild>  {/*create a dropdown menu item*/}
+          {subscriptionPlan?.isSubscribed ? (  //if the user is subscribed, show the text 'Manage Subscription' else show the text 'Upgrade'
             <Link href='/dashboard/billing'>
               Manage Subscription
             </Link>
@@ -91,7 +91,7 @@ const UserAccountNav = async ({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className='cursor-pointer'>
-            <LogoutLink>Log out</LogoutLink>
+            <LogoutLink>Log out</LogoutLink> 
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
