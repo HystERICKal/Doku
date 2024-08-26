@@ -12,8 +12,7 @@ interface MessagesProps {
 }
 
 const Messages = ({ fileId }: MessagesProps) => { //create a component for the messages
-  const { isLoading: isAiThinking } =
-    useContext(ChatContext)
+  const { isLoading: isAiThinking } = useContext(ChatContext)
 
   const { data, isLoading, fetchNextPage } = //use the useInfiniteQuery hook to fetch the next page of messages
     trpc.getFileMessages.useInfiniteQuery( //fetch the messages that are to be displayed in the chat window
@@ -48,11 +47,11 @@ const Messages = ({ fileId }: MessagesProps) => { //create a component for the m
     ...(messages ?? []), //if there are messages, show them else show an empty array
   ]
 
-  const lastMessageRef = useRef<HTMLDivElement>(null)
+  const lastMessageRef = useRef<HTMLDivElement>(null) //create a ref for the last message in the chat window to scroll to the bottom of the chat window when a new message is added to the chat window
 
-  const { ref, entry } = useIntersection({
-    root: lastMessageRef.current,
-    threshold: 1,
+  const { ref, entry } = useIntersection({ //use the useIntersection hook to check if the last message is in view or not
+    root: lastMessageRef.current, //set the root to the last message
+    threshold: 1, //set the threshold to 1 to check if the last message is in view or not
   })
 
   useEffect(() => {

@@ -37,11 +37,11 @@ export const ChatContextProvider = ({ //create a provider for the chat context
   const [message, setMessage] = useState<string>('') //initialize the message state
   const [isLoading, setIsLoading] = useState<boolean>(false) //initialize the isLoading state
 
-  const utils = trpc.useContext()
+  const utils = trpc.useContext() //getting access to trpc utils to enable use of optimistic updates with react query and trpc 
 
   const { toast } = useToast() //use the useToast hook to show a toast message to the user
 
-  const backupMessage = useRef('')
+  const backupMessage = useRef('') //keep track of the message in the chat input insed a ref to avoid forcing a re-render
 
   //This mutation allows for sending a message to an api endpoint
   //tRPC will not be used since we need to stream back a response from the api to the clientside (ChatContextProvider) and in tRPC that doesn't work, it only works for jSON responses
@@ -65,21 +65,24 @@ export const ChatContextProvider = ({ //create a provider for the chat context
 
       return response.body 
     },
-    onMutate: async ({ message }) => {
-      backupMessage.current = message
+
+    //This is the optimistic update part of the mutation
+    //This onMutate function will be called as soon as the enter key is pressed in the chat input to send the message
+    onMutate: async ({ message }) => { 
+      backupMessage.current = message //create a backup of the message so that if anything goes wrong, roll back the optimistic update and put the message back into the chat input
       setMessage('')
 
       // step 1
-      await utils.getFileMessages.cancel()
+      await utils.getFileMessages.cancel() //cancel any outgoing refetches so that they don't overwrite the optimistic update
 
       // step 2
       const previousMessages =
-        utils.getFileMessages.getInfiniteData()
+        utils.getFileMessages.getInfiniteData() //snapshot the previous value that was there
 
       // step 3
-      utils.getFileMessages.setInfiniteData(
+      utils.getFileMessages.setInfiniteData( //optimistically insert the new value or new message into the chat window right away as user sends it
         { fileId, limit: INFINITE_QUERY_LIMIT },
-        (old) => {
+        (old) => { //receive old data in the callback
           if (!old) {
             return {
               pages: [],
@@ -87,21 +90,21 @@ export const ChatContextProvider = ({ //create a provider for the chat context
             }
           }
 
-          let newPages = [...old.pages]
+          let newPages = [...old.pages] //clone the old pages
 
-          let latestPage = newPages[0]!
+          let latestPage = newPages[0]! //has latest 10 pages in the chat
 
-          latestPage.messages = [
+          latestPage.messages = [ //insert the latest message that the user just typed into the array
             {
-              createdAt: new Date().toISOString(),
+              createdAt: new Date().toISOString(), 
               id: crypto.randomUUID(),
               text: message,
               isUserMessage: true,
             },
-            ...latestPage.messages,
+            ...latestPage.messages, //take the messages that were already there in the chat and move them up to accomodate space for the new message
           ]
 
-          newPages[0] = latestPage
+          newPages[0] = latestPage //inject new message into the newpages as the last/first page
 
           return {
             ...old,
@@ -110,17 +113,20 @@ export const ChatContextProvider = ({ //create a provider for the chat context
         }
       )
 
-      setIsLoading(true)
+      setIsLoading(true) //add the loading state of the ai after adding the user message
 
       return {
-        previousMessages:
+        previousMessages: //display previous messages
           previousMessages?.pages.flatMap(
-            (page) => page.messages
+            (page) => page.messages 
           ) ?? [],
       }
     },
-    onSuccess: async (stream) => {
-      setIsLoading(false)
+
+    //Display the ai message that is sent back as a stream in real-time
+    //When a response is gotten back from the api, it will contain th ereadable stream that can be simply put into the message as it is received to get a real time feeling
+    onSuccess: async (stream) => { 
+      setIsLoading(false) //the loading essage from the ai should now not be there anymore
 
       if (!stream) {
         return toast({
@@ -131,20 +137,20 @@ export const ChatContextProvider = ({ //create a provider for the chat context
         })
       }
 
-      const reader = stream.getReader()
+      const reader = stream.getReader() //read the contents of the stream
       const decoder = new TextDecoder()
-      let done = false
+      let done = false //keep track of when done
 
       // accumulated response
       let accResponse = ''
 
       while (!done) {
         const { value, done: doneReading } =
-          await reader.read()
-        done = doneReading
-        const chunkValue = decoder.decode(value)
+          await reader.read() //read the stream
+        done = doneReading //done nreading no need to execute further code
+        const chunkValue = decoder.decode(value) //actual stream that the ai gives back so we can add it to the message in real-time
 
-        accResponse += chunkValue
+        accResponse += chunkValue //append chunk value to the accumulated response
 
         // append chunk to the actual message
         utils.getFileMessages.setInfiniteData(
@@ -160,10 +166,10 @@ export const ChatContextProvider = ({ //create a provider for the chat context
             )
 
             let updatedPages = old.pages.map((page) => {
-              if (page === old.pages[0]) {
+              if (page === old.pages[0]) { //if true then we are on the last page which also contains the last message
                 let updatedMessages
 
-                if (!isAiResponseCreated) {
+                if (!isAiResponseCreated) { //is ai response message is not created then create it once
                   updatedMessages = [
                     {
                       createdAt: new Date().toISOString(),
@@ -171,10 +177,10 @@ export const ChatContextProvider = ({ //create a provider for the chat context
                       text: accResponse,
                       isUserMessage: false,
                     },
-                    ...page.messages,
+                    ...page.messages, //append all the other messegas that were there before
                   ]
                 } else {
-                  updatedMessages = page.messages.map(
+                  updatedMessages = page.messages.map( //if there is a message already, then just add on it
                     (message) => {
                       if (message.id === 'ai-response') {
                         return {
@@ -202,17 +208,17 @@ export const ChatContextProvider = ({ //create a provider for the chat context
       }
     },
 
-    onError: (_, __, context) => {
-      setMessage(backupMessage.current)
+    onError: (_, __, context) => { // something went wrong, so put the text that we put in the chat window, back into the textbox input
+      setMessage(backupMessage.current) //put back the text that we put in the chat window
       utils.getFileMessages.setData(
         { fileId },
-        { messages: context?.previousMessages ?? [] }
+        { messages: context?.previousMessages ?? [] } //roll back to the previous messages in the chat window
       )
     },
     onSettled: async () => {
       setIsLoading(false)
 
-      await utils.getFileMessages.invalidate({ fileId })
+      await utils.getFileMessages.invalidate({ fileId }) //whether everything is successful or not, refresh the entire chat data to get the most current data
     },
   })
 

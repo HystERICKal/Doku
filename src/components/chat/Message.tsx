@@ -29,7 +29,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>( //create a component f
               invisible: isNextMessageSamePerson, //if the next message is from the same person, set the message icon to invisible
             }
           )}>
-          {message.isUserMessage ? ( //if the message is from the user, show the user icon else show the assistant (ai) icon
+          {message.isUserMessage ? ( //if the message is from the user, show the user icon else show the assistant (ai) icon (logo)
             <Icons.user className='fill-zinc-200 text-zinc-200 h-3/4 w-3/4' />
           ) : (
             <Icons.logo className='fill-zinc-300 h-3/4 w-3/4' />
@@ -60,9 +60,11 @@ const Message = forwardRef<HTMLDivElement, MessageProps>( //create a component f
                   !message.isUserMessage,
               }
             )}>
-            {typeof message.text === 'string' ? ( //if the message is a string, show the message as a string else show the message as markdown
+
+              {/*Display the actual messages */}
+            {typeof message.text === 'string' ? ( //React Markdown can only accept a literal string, but the text could also be a JSX.Element, which cannot be rendered in markdown.
               <ReactMarkdown
-                className={cn('prose', {
+                className={cn('prose', { //set the markdown class to prose to format the message as markdown
                   'text-zinc-50': message.isUserMessage, //if the message is from the user, set the text color to zinc
                 })}>
                 {message.text} 
@@ -72,7 +74,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>( //create a component f
             )}
             {message.id !== 'loading-message' ? ( //if the message id is not loading-message, show the message timestamp
               <div
-                className={cn(
+                className={cn( // dynamic classname with the cn helper function
                   'text-xs select-none mt-2 w-full text-right',
                   {
                     'text-zinc-500': !message.isUserMessage, //if the message is from the assistant, set the text color to zinc

@@ -61,61 +61,61 @@ export const appRouter = router({
     })
   }),
 
-  createStripeSession: privateProcedure.mutation(
-    async ({ ctx }) => {
-      const { userId } = ctx
+  createStripeSession: privateProcedure.mutation( //create a stripe session for the user to upgrade to a premium account
+    async ({ ctx }) => { //destructure the context
+      const { userId } = ctx //destructure the user id from the context
 
-      const billingUrl = absoluteUrl('/dashboard/billing')
+      const billingUrl = absoluteUrl('/dashboard/billing') //need absolute url to redirect the user to the billing page, can't use relative urls here since this is server side
 
-      if (!userId)
+      if (!userId) //if there is no user id, throw an error
         throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-      const dbUser = await db.user.findFirst({
+      const dbUser = await db.user.findFirst({ //find the user in the database
         where: {
-          id: userId,
+          id: userId, //find the user where the id matches the user id above
         },
       })
 
-      if (!dbUser)
+      if (!dbUser) //if the user is not found in the database, throw an error
         throw new TRPCError({ code: 'UNAUTHORIZED' })
 
-      const subscriptionPlan =
-        await getUserSubscriptionPlan()
+      const subscriptionPlan = await getUserSubscriptionPlan() //get the subscription plan for the user
 
-      if (
-        subscriptionPlan.isSubscribed &&
-        dbUser.stripeCustomerId
+      if ( //if the user is already subscribed and has a stripe customer id (are they on a pro plan or not...)
+        subscriptionPlan.isSubscribed &&  //check if the user is subscribed
+        dbUser.stripeCustomerId //check if the user has a stripe customer id
       ) {
-        const stripeSession =
-          await stripe.billingPortal.sessions.create({
-            customer: dbUser.stripeCustomerId,
-            return_url: billingUrl,
+        const stripeSession = //user is subscribed so create a stripe session for the user to manage their subscription
+          await stripe.billingPortal.sessions.create({ //create a billing portal session for the user
+            customer: dbUser.stripeCustomerId, //get the customer id from the user
+            return_url: billingUrl, //return the user to the billing page
           })
 
-        return { url: stripeSession.url }
+        return { url: stripeSession.url } //return the url of the stripe session (returma an object that has a url property that we can sens back to the frontend to redirect the user to)
       }
 
-      const stripeSession =
-        await stripe.checkout.sessions.create({
-          success_url: billingUrl,
-          cancel_url: billingUrl,
-          payment_method_types: ['card', 'paypal'],
-          mode: 'subscription',
-          billing_address_collection: 'auto',
-          line_items: [
+      const stripeSession = //user is not subscribed so create a stripe session for the user to upgrade to a premium account
+        await stripe.checkout.sessions.create({ //create a checkout session for the user
+          success_url: billingUrl, //redirect the user to the billing page
+          cancel_url: billingUrl, //redirect the user to the billing page
+          payment_method_types: ['card', 'paypal'], //allow the user to pay with card or paypal
+          mode: 'subscription', //set the mode to subscription
+          billing_address_collection: 'auto', //collect the billing address automatically
+          line_items: [ //set the line items for the stripe session
             {
-              price: PLANS.find(
+              price: PLANS.find( //find the plan for the user
                 (plan) => plan.name === 'Pro'
-              )?.price.priceIds.test,
+              )?.price.priceIds.test, //get the price id for the plan
               quantity: 1,
             },
           ],
-          metadata: {
-            userId: userId,
+
+          metadata: { //set the metadata for the stripe session
+            userId: userId, //set the user id which will eventually be sent over to the webhook so that we can make sure that we update this data for the correct user so we enable their plan and everything works for them
           },
         })
 
-      return { url: stripeSession.url }
+      return { url: stripeSession.url } //return the url of the stripe session
     }
   ),
 
