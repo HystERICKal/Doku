@@ -17,20 +17,18 @@ import { useToast } from './ui/use-toast'
 import { trpc } from '@/app/_trpc/client'
 import { useRouter } from 'next/navigation'
 
-const UploadDropzone = ({
-  isSubscribed,
+const UploadDropzone = ({ //create a function for the upload dropzone
+  isSubscribed, //get the subscription plan the user is on
 }: {
   isSubscribed: boolean
 }) => {
   const router = useRouter()
 
-  const [isUploading, setIsUploading] =
-    useState<boolean>(false)
-  const [uploadProgress, setUploadProgress] =
-    useState<number>(0)
-  const { toast } = useToast()
+  const [isUploading, setIsUploading] = useState<boolean>(false) //create a state to track if the file is uploading
+  const [uploadProgress, setUploadProgress] = useState<number>(0) //create a state to track the upload progress
+  const { toast } = useToast() //destructuring the toast function from the useToast hook
 
-  const { startUpload } = useUploadThing(
+  const { startUpload } = useUploadThing( //destructuring the startUpload function from the useUploadThing hook
     isSubscribed ? 'proPlanUploader' : 'freePlanUploader'
   )
 

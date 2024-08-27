@@ -31,20 +31,20 @@ const onUploadComplete = async ({
   metadata, //metadata is the object returned from the middleware function
   file, //file is the file that was uploaded
 }: {
-  metadata: Awaited<ReturnType<typeof middleware>>
+  metadata: Awaited<ReturnType<typeof middleware>> //get the metadata from the middleware function
   file: {
     key: string
     name: string
     url: string
   }
 }) => {
-  const isFileExist = await db.file.findFirst({
+  const isFileExist = await db.file.findFirst({ //check if the file already exists in the database
     where: {
-      key: file.key,
+      key: file.key, //find the file by the key
     },
   })
 
-  if (isFileExist) return
+  if (isFileExist) return //if the file already exists in the database, return
 
   const createdFile = await db.file.create({ //create a new file in the database using prisma
     data: {
@@ -69,27 +69,21 @@ const onUploadComplete = async ({
 
     const pagesAmt = pageLevelDocs.length //get the number of pages in the pdf...each element in the array is a page
 
-    const { subscriptionPlan } = metadata
-    const { isSubscribed } = subscriptionPlan
+    const { subscriptionPlan } = metadata //destructure the subscription plan from the metadata
+    const { isSubscribed } = subscriptionPlan //destructure the isSubscribed property from the subscription plan
 
-    const isProExceeded =
-      pagesAmt >
-      PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf
-    const isFreeExceeded =
-      pagesAmt >
-      PLANS.find((plan) => plan.name === 'Free')!
-        .pagesPerPdf
+    const isProExceeded = pagesAmt > PLANS.find((plan) => plan.name === 'Pro')!.pagesPerPdf //check if the number of pages in the pdf is greater than the number of pages allowed in the Pro plan
+    const isFreeExceeded = pagesAmt > PLANS.find((plan) => plan.name === 'Free')!.pagesPerPdf //check if the number of pages in the pdf is greater than the number of pages allowed in the Free plan
 
-    if (
-      (isSubscribed && isProExceeded) ||
-      (!isSubscribed && isFreeExceeded)
+    if ( //if the user is subscribed and the number of pages in the pdf is greater than the number of pages allowed in the Pro plan or the user is not subscribed and the number of pages in the pdf is greater than the number of pages allowed in the Free plan
+      (isSubscribed && isProExceeded) || (!isSubscribed && isFreeExceeded) //are they on the pro plan and exceed the pro limit or are they on the free plan and exceed the free limit
     ) {
-      await db.file.update({
+      await db.file.update({ //update the file in the database
         data: {
-          uploadStatus: 'FAILED',
+          uploadStatus: 'FAILED', //set the upload status to failed
         },
         where: {
-          id: createdFile.id,
+          id: createdFile.id, //find the file by the id so it can be updated
         },
       })
     }
@@ -133,12 +127,12 @@ const onUploadComplete = async ({
 
 // This is the file router that will be used in the API route
 export const ourFileRouter = {
-  freePlanUploader: f({ pdf: { maxFileSize: '4MB' } })
+  freePlanUploader: f({ pdf: { maxFileSize: '4MB' } }) //create a new file uploader for the free plan
     //runs before the file is uploaded
     .middleware(middleware) //middleware is a function that returns an object with the subscription plan and the user id. It runs when a user has requested to upload a file from the client side
     //runs after the file is uploaded
     .onUploadComplete(onUploadComplete),
-  proPlanUploader: f({ pdf: { maxFileSize: '16MB' } })
+  proPlanUploader: f({ pdf: { maxFileSize: '16MB' } }) //create a new file uploader for the pro plan
     .middleware(middleware)
     .onUploadComplete(onUploadComplete),
 } satisfies FileRouter

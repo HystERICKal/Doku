@@ -24,16 +24,16 @@ const UserAccountNav = async ({ //create a function for the user account nav
   email,
   imageUrl,
   name,
-}: UserAccountNavProps) => {  //get the email, image url, and name of the user
+}: UserAccountNavProps) => { //get the email, image url, and name of the user
   const subscriptionPlan = await getUserSubscriptionPlan() //get the subscription plan the user is on
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         asChild
-        className='overflow-visible'> {/*create a dropdown menu trigger*/}
-        <Button className='rounded-full h-8 w-8 aspect-square bg-slate-400'> {/*create a button for the user account nav*/}
-          <Avatar className='relative w-8 h-8'> {/*create an avatar for the user account nav*/}
+        className='overflow-visible'>
+        <Button className='rounded-full h-8 w-8 aspect-square bg-slate-400'>
+          <Avatar className='relative w-8 h-8'>
             {imageUrl ? ( //if there is an image url, display the image
               <div className='relative aspect-square h-full w-full'>
                 {/* <Image
@@ -53,7 +53,7 @@ const UserAccountNav = async ({ //create a function for the user account nav
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className='bg-white' align='end'> {/*create a dropdown menu content*/}
+      <DropdownMenuContent className='bg-white' align='end'>
         <div className='flex items-center justify-start gap-2 p-2'>
           <div className='flex flex-col space-y-0.5 leading-none'>
             {name && ( //if there is a name, display the name
@@ -69,14 +69,14 @@ const UserAccountNav = async ({ //create a function for the user account nav
           </div>
         </div>
 
-        <DropdownMenuSeparator /> {/*create a dropdown menu separator*/}
+        <DropdownMenuSeparator /> {/* create a separator for the dropdown menu */}
 
-        <DropdownMenuItem asChild>  {/*create a dropdown menu item*/}
-          <Link href='/dashboard'>Dashboard</Link>  {/*create a link to the dashboard*/}
+        <DropdownMenuItem asChild>
+          <Link href='/dashboard'>Dashboard</Link>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>  {/*create a dropdown menu item*/}
-          {subscriptionPlan?.isSubscribed ? (  //if the user is subscribed, show the text 'Manage Subscription' else show the text 'Upgrade'
+        <DropdownMenuItem asChild>
+          {subscriptionPlan?.isSubscribed ? ( //if the user is subscribed, show the text 'Manage Subscription' else show the text 'Upgrade'
             <Link href='/dashboard/billing'>
               Manage Subscription
             </Link>
@@ -91,7 +91,7 @@ const UserAccountNav = async ({ //create a function for the user account nav
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className='cursor-pointer'>
-            <LogoutLink>Log out</LogoutLink> 
+            <LogoutLink>Log out</LogoutLink>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

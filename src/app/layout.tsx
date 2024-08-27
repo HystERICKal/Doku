@@ -10,14 +10,14 @@ import 'simplebar-react/dist/simplebar.min.css'
 
 import { Toaster } from '@/components/ui/toaster'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] }) //create a subset of the Inter font
 
-export const metadata = constructMetadata()
+export const metadata = constructMetadata() //construct metadata for the app
 
-export default function RootLayout({
+export default function RootLayout({  //create a function for the root layout
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode //pass in the children
 }) {
   return (
     <html lang='en' className='light'>

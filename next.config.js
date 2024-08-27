@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async redirects() {
+  async redirects() { //this is to redirect the sign-in and sign-up to the api
     return [
       {
         source: '/sign-in',

@@ -45,10 +45,10 @@ export function constructMetadata({ //function to construct metadata for the app
       title,
       description,
       images: [image],
-      creator: "@joshtriedcoding"
+      creator: "@erick_nyoro"
     },
     icons,
-    metadataBase: new URL('https://quill-jet.vercel.app'),
+    metadataBase: new URL('https://doku-three.vercel.app/'),
     themeColor: '#FFF',
     ...(noIndex && {
       robots: {
