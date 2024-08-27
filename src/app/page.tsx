@@ -17,14 +17,12 @@ export default function Home() {
           </p>
         </div>
         <h1 className='max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl'>
-          Chat with your{' '}
-          <span className='text-blue-600'>documents</span>{' '}
-          in seconds.
+          Instantly chat with your{' '}
+          <span className='text-blue-600'>documents.</span>{' '}
+          
         </h1>
         <p className='mt-5 max-w-prose text-zinc-700 sm:text-lg'>
-          Doku allows you to have conversations with any
-          PDF document. Simply upload your file and start
-          asking questions right away.
+        Doku lets you chat with any PDF. Just upload your file and start asking questions instantly.
         </p>
 
         <Link /*Creating a link with button styles*/
@@ -91,7 +89,7 @@ export default function Home() {
         <div className='mb-12 px-6 lg:px-8'>
           <div className='mx-auto max-w-2xl sm:text-center'>
             <h2 className='mt-2 font-bold text-4xl text-gray-900 sm:text-5xl'>
-              Start chatting in minutes
+              Start chatting in seconds...
             </h2>
             <p className='mt-4 text-lg text-gray-600'>
               Chatting to your PDF files has never been

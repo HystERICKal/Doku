@@ -13,7 +13,7 @@ const UpgradeButton = () => { //create a component for the upgrade button
   })
 
   return (
-    <Button onClick={() => createStripeSession()} className='w-full'> {/*create a button to upgrade the user to a premium account*/}
+    <Button onClick={() => createStripeSession()} className='w-full'>
       Upgrade now <ArrowRight className='h-5 w-5 ml-1.5' />
     </Button>
   )

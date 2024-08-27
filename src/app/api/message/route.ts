@@ -53,7 +53,7 @@ export const POST = async (req: NextRequest) => {
   })
 
   const pinecone = await getPineconeClient()
-  const pineconeIndex = pinecone.Index('quill')
+  const pineconeIndex = pinecone.Index('doku')
 
   const vectorStore = await PineconeStore.fromExistingIndex( //search vector store for the most similar/relevant pages to the user's question
     embeddings, //embeddings object created above

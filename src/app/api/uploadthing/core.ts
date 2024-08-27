@@ -51,14 +51,14 @@ const onUploadComplete = async ({
       key: file.key,
       name: file.name,
       userId: metadata.userId,
-      url: `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`, //url of the file...could have done (file.url) but that one times out sometimes, so directly get the image from the s3 bucket (aws s3)
+      url: `https://utfs.io/f/${file.key}`, //url of the file...could have done (file.url) but that one times out sometimes, so directly get the image from the s3 bucket (aws s3)
       uploadStatus: 'PROCESSING',
     },
   })
 
   try { 
     const response = await fetch( //fetch the file from the s3 bucket
-      `https://uploadthing-prod.s3.us-west-2.amazonaws.com/${file.key}`
+      `https://utfs.io/f/${file.key}`
     )
 
     const blob = await response.blob() //get the file as a blob
@@ -85,7 +85,8 @@ const onUploadComplete = async ({
         where: {
           id: createdFile.id, //find the file by the id so it can be updated
         },
-      })
+      });
+      return;
     }
 
     // vectorize and index entire document [check Langchain js documentation for better understanding]
@@ -127,7 +128,7 @@ const onUploadComplete = async ({
 
 // This is the file router that will be used in the API route
 export const ourFileRouter = {
-  freePlanUploader: f({ pdf: { maxFileSize: '4MB' } }) //create a new file uploader for the free plan
+  freePlanUploader: f({ pdf: { maxFileSize: '32MB' } }) //create a new file uploader for the free plan
     //runs before the file is uploaded
     .middleware(middleware) //middleware is a function that returns an object with the subscription plan and the user id. It runs when a user has requested to upload a file from the client side
     //runs after the file is uploaded
