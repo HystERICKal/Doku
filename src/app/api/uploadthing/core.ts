@@ -51,14 +51,14 @@ const onUploadComplete = async ({
       key: file.key,
       name: file.name,
       userId: metadata.userId,
-      url: file.url, //url of the file...could have done (file.url) but that one times out sometimes, so directly get the image from the s3 bucket (aws s3)
+      url: `https://utfs.io/f/${file.key}`, //url of the file...could have done (file.url) but that one times out sometimes, so directly get the image from the s3 bucket (aws s3)
       uploadStatus: 'PROCESSING',
     },
   })
 
   try { 
     const response = await fetch( //fetch the file from the s3 bucket
-      file.url
+      `https://utfs.io/f/${file.key}`
     )
 
     const blob = await response.blob() //get the file as a blob
